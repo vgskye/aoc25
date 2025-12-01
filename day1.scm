@@ -1,0 +1,5 @@
+(import (scheme file))
+(define input (open-input-file "day1.txt"))
+(define parse (lambda (line) (if (char=? (string-ref line 0) #\R) (string->number (string-copy line 1 (string-length line))) (* -1 (string->number (string-copy line 1 (string-length line)))))))
+(define step (lambda (n) (+ (if (eqv? n 0) 1 0) (let ((line (read-line input))) (println n) (if (eof-object? line) 0 (step (modulo (+ n (parse line)) 100)))))))
+(print (step 50))

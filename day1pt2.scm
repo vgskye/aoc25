@@ -1,0 +1,6 @@
+(import (scheme file))
+(define input (open-input-file "day1.txt"))
+(define parse (lambda (line) (if (char=? (string-ref line 0) #\R) (string->number (string-copy line 1 (string-length line))) (* -1 (string->number (string-copy line 1 (string-length line)))))))
+(define ceiling-quotient (lambda (a b) (- (floor-quotient (- a) b))))
+(define step (lambda (n) (let ((line (read-line input))) (if (eof-object? line) 0 (let* ((diff (parse line)) (newuwl (+ n diff)) (new (modulo newuwl 100)) (extra (if (< newuwl n) (- (ceiling-quotient n 100) (ceiling-quotient newuwl 100)) (- (floor-quotient newuwl 100) (floor-quotient n 100))))) (println new " " extra) (+ extra (step new)))))))
+(print (step 50))
