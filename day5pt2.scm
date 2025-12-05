@@ -29,25 +29,45 @@
         (if (and (>= elem (caar set)) (<= elem (cadar set)))
             (car set)
             (get-range (cdr set) elem)))))
+(define has-matryoshka-range?
+  (lambda (set elem)
+    (if (eqv? set '())
+        #f
+        (or (and (>= (car elem) (caar set)) (<= (cadr elem) (cadar set)))
+            (has-matryoshka-range? (cdr set) elem)))))
 (define ranges (read-ranges '()))
+(define presimplify-ranges
+  (lambda (dec acc)
+    (if (eqv? dec '())
+        acc
+        (if (or (has-matryoshka-range? (cdr dec) (car dec)) (has-matryoshka-range? acc (car dec)))
+            (presimplify-ranges (cdr dec) acc)
+            (presimplify-ranges (cdr dec) (cons (car dec) acc))))))
+(define lmp
+  (lambda (x acc)
+    (let ((rg (get-range acc x)))
+      (if (eqv? rg '())
+          x
+          (lmp (+ (cadr rg) 1) acc)))))
+(define rmp
+  (lambda (x acc)
+    (let ((rg (get-range acc x)))
+      (if (eqv? rg '())
+          x
+          (rmp (- (car rg) 1) acc)))))
 (define simplify-ranges
   (lambda (dec acc)
     (if (eqv? dec '())
         acc
-        (let ((rgl (get-range acc (caar dec)))
-              (rgh (get-range acc (cadar dec))))
-          (let ((newl (if (eqv? rgl '())
-                          (caar dec)
-                          (+ (cadr rgl) 1)))
-                (newr (if (eqv? rgh '())
-                          (cadar dec)
-                          (- (car rgh) 1))))
-            (if (< newr newl)
-                (simplify-ranges (cdr dec) acc)
-                (simplify-ranges (cdr dec) (cons (list newl newr) acc))))))))
+
+        (let ((newl (lmp (caar dec) acc))
+              (newr (rmp (cadar dec) acc)))
+          (if (< newr newl)
+              (simplify-ranges (cdr dec) acc)
+              (simplify-ranges (cdr dec) (cons (list newl newr) acc)))))))
 (define solve
   (lambda (dec acc)
     (if (eqv? dec '())
         acc
         (solve (cdr dec) (+ (- (cadar dec) (caar dec)) acc 1)))))
-(display (solve (simplify-ranges (simplify-ranges ranges '()) '()) 0))
+(display (solve (simplify-ranges (presimplify-ranges ranges '()) '()) 0))
