@@ -1,0 +1,48 @@
+(import (scheme file)
+        (scheme cxr))
+(define input (open-input-file "day6.txt"))
+(define (string-split char-delimiter? string)
+  (define (maybe-add a b parts)
+    (if (= a b)
+        parts
+        (cons (substring string a b) parts)))
+  (let ((n (string-length string)))
+    (let loop ((a 0)
+               (b 0)
+               (parts '()))
+      (if (< b n)
+          (if (not (char-delimiter? (string-ref string b)))
+              (loop a (+ b 1) parts)
+              (loop (+ b 1) (+ b 1) (maybe-add a b parts)))
+          (reverse (maybe-add a b parts))))))
+(define filter-blank
+  (lambda (dec)
+    (if (eqv? dec '())
+        '()
+        (if (string=? (car dec) "")
+            (filter-blank (cdr dec))
+            (cons (car dec) (filter-blank (cdr dec)))))))
+(define read-tabular
+  (lambda () (filter-blank (string-split (lambda (c) (char=? c #\ )) (read-line input)))))
+(define read-tabular-num (lambda () (map string->number (read-tabular))))
+(define l1 (read-tabular-num))
+(define l2 (read-tabular-num))
+(define l3 (read-tabular-num))
+(define l4 (read-tabular))
+(define input (reverse (list l1 l2 l3 l4)))
+(define any
+  (lambda (pred list)
+    (if (eqv? list '())
+        #f
+        (or (pred (car list)) (any pred (cdr list))))))
+(define zip
+  (lambda a
+    (if (any (lambda (a) (eqv? a '())) a)
+        '()
+        (cons (map car a) (apply zip (map cdr a))))))
+(define solve
+  (lambda (a)
+    (if (string=? (car a) "+")
+        (apply + (cdr a))
+        (apply * (cdr a)))))
+(display (apply + (map solve (apply zip input))))
