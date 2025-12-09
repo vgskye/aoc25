@@ -165,32 +165,32 @@ for cand in cands:
         #     break
     if bad:
         continue
-    truelefts = lefts(xmin, ymin)
-    ycoords = list(ysparse & set(range(ymin, ymax + 1)))
-    random.shuffle(ycoords)
-    for y in ycoords:
-        if not (painted(xmin, y) and painted(xmax, y)):
-            print(y, lefts(xmin, y), lefts(xmax, y))
-            bad = True
-            break
-        if lefts(xmin, y) != truelefts or lefts(xmax, y) != truelefts:
-            print(y, lefts(xmin, y), lefts(xmax, y))
-            bad = True
-            break
-    if bad:
-        continue
-    print(area(cand))
-    break
-    # ctr = 0
-    # while (ctr / area(cand)) < 0.0005:
-    #     x = random.randint(xmin, xmax)
-    #     y = random.randint(ymin, ymax)
-    #     ctr += 1
-    #     if ctr % 10000 == 0:
-    #         print(ctr)
-    #     if not painted(x, y):
-    #         print(ctr, x, y)
+    # truelefts = lefts(xmin, ymin)
+    # ycoords = list(ysparse & set(range(ymin, ymax + 1)))
+    # random.shuffle(ycoords)
+    # for y in ycoords:
+    #     if not (painted(xmin, y) and painted(xmax, y)):
+    #         print(y, lefts(xmin, y), lefts(xmax, y))
+    #         bad = True
     #         break
-    # if (ctr / area(cand)) >= 0.0005:
-    #     print(ctr, ctr / area(cand), cand, area(cand))
-    #     break
+    #     if lefts(xmin, y) != truelefts or lefts(xmax, y) != truelefts:
+    #         print(y, lefts(xmin, y), lefts(xmax, y))
+    #         bad = True
+    #         break
+    # if bad:
+    #     continue
+    print(area(cand))
+    # break
+    ctr = 0
+    while (ctr / area(cand)) < 0.0005:
+        x = random.randint(xmin, xmax)
+        y = random.randint(ymin, ymax)
+        ctr += 1
+        if ctr % 10000 == 0:
+            print(ctr)
+        if not painted(x, y):
+            print(ctr, x, y)
+            break
+    if (ctr / area(cand)) >= 0.0005:
+        print(ctr, ctr / area(cand), cand, area(cand))
+        break
